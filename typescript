@@ -1,0 +1,119 @@
+Script started on Sat 16 Feb 2019 08:14:00 PM EST
+[1;95m~/csci28/alastlog-hw[0m[0;36m (master)[0;31m [0m $ make alastlog
+gcc -Wall -Wextra -g -c alastlog.c
+gcc -Wall -Wextra -g -c lllib.c
+gcc -Wall -Wextra -g -o alastlog alastlog.o lllib.o
+[1;95m~/csci28/alastlog-hw[0m[0;36m (master)[0;31m [0m $ ./alastlog -u mst611
+Username         Port     From             Latest
+mst611           pts/9    65.96.152.159    Sat Feb 16 19:59:58 -0500 2019
+[1;95m~/csci28/alastlog-hw[0m[0;36m (master)[0;31m [0m $ ./alastlog -u mst611[K[K[K[K[K[K59651
+Username         Port     From             Latest
+mst611           pts/9    65.96.152.159    Sat Feb 16 19:59:58 -0500 2019
+[1;95m~/csci28/alastlog-hw[0m[0;36m (master)[0;31m [0m $ ./alastlog -u molay
+Username         Port     From             Latest
+molay            pts/0    pool-108-20-246- Wed Jan 30 11:15:19 -0500 2019
+[1;95m~/csci28/alastlog-hw[0m[0;36m (master)[0;31m [0m $ ./alastlog -u molay -t 7
+[1;95m~/csci28/alastlog-hw[0m[0;36m (master)[0;31m [0m $ ./alastlog -u nobody
+Username         Port     From             Latest
+nobody                                     **Never logged in**
+[1;95m~/csci28/alastlog-hw[0m[0;36m (master)[0;31m [0m $ ./alastlog -u nobody -t 1
+[1;95m~/csci28/alastlog-hw[0m[0;36m (master)[0;31m [0m $ ./alastlog > my-out
+[1;95m~/csci28/alastlog-hw[0m[0;36m (master)[0;31m [0m $ lastlog > reg-out
+[1;95m~/csci28/alastlog-hw[0m[0;36m (master)[0;31m [0m $ diff my-out reg-out 
+[1;95m~/csci28/alastlog-hw[0m[0;36m (master)[0;31m [0m $ ~lib2`[K16[K5/hw/alastlog/test.alastlog 
+----------------------------
+Executing Postive Test Cases
+----------------------------
+Test 1: alastlog 
+Test passed
+Test 2: alastlog -t 7
+Test passed
+Test 3: alastlog -u mst611
+Test passed
+Test 4: alastlog -u mst611 -t 1
+Test passed
+Test 5: alastlog -u mst611 -t 0
+Test passed
+Test 6: alastlog  for each user
+Test passed
+Test 7: alastlog -t 7 for each user
+Test passed
+Creating truncated lastlog file
+Test 8: alastlog -f lastlog.16384 -t 180 for each user with ID <= 16384
+Test passed
+Test 9: alastlog -f lastlog.16384 -t 180 for each user with ID > 16384
+Test passed
+----------------------------
+
+
+-----------------------------
+Executing Negative Test Cases
+-----------------------------
+Test 10: alastlog -u baduser
+Test passed
+exit status: 1
+error output
+alastlog: invalid user input: baduser
+Test 11: alastlog -t badtime
+Test passed
+exit status: 1
+error output
+alastlog: invalid numeric argument 'badtime'
+Test 12: alastlog -u mst611 -t badtime
+Test passed
+exit status: 1
+error output
+alastlog: invalid numeric argument 'badtime'
+Test 13: alastlog -u mst611 -t 180 -f noexist
+Test passed
+exit status: 1
+error output
+noexist: No such file or directory
+Test 14: alastlog -u
+Test passed
+exit status: 1
+error output
+alastlog: unexpected argument: -u
+Usage: alastlog [options]
+
+Options:
+	-u LOGIN	print lastlog record for user LOGIN
+	-t DAYS		print only records more recent than DAYS
+	-f FILE		read data from specified FILE
+
+Test 15: alastlog -t
+Test passed
+exit status: 1
+error output
+alastlog: unexpected argument: -t
+Usage: alastlog [options]
+
+Options:
+	-u LOGIN	print lastlog record for user LOGIN
+	-t DAYS		print only records more recent than DAYS
+	-f FILE		read data from specified FILE
+
+Test 16: alastlog -f
+Test passed
+exit status: 1
+error output
+alastlog: unexpected argument: -f
+Usage: alastlog [options]
+
+Options:
+	-u LOGIN	print lastlog record for user LOGIN
+	-t DAYS		print only records more recent than DAYS
+	-f FILE		read data from specified FILE
+
+----------------------------
+
+
+----------------------------
+Test Results
+----------------------------
+All tests passed
+----------------------------
+[1;95m~/csci28/alastlog-hw[0m[0;36m (master)[0;31m [0m $ exit
+exit
+
+Script done on Sat 16 Feb 2019 08:15:47 PM EST

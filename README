@@ -1,0 +1,33 @@
+README for alastlog
+
+  Student: Matthew Thomas
+  Date: 2/16/2019
+
+Summary:
+
+  This submission contains the files:
+	README		-- this file
+	alastlog.c  -- main logic to process options and display lastlog contents
+	lllib.c     -- library functions to open, close, read, and buffer lastlog
+	lllib.h     -- header file for lllib
+	Plan        -- design document for this assignment
+	Makefile	-- the Makefile
+	typescript  -- a sample run, including the lib215 test script
+	
+Notes:
+	A lot of the code to implement buffering was copied from the sample files
+	provided in this assignment, utmplib.c and utmp.h. These are the same as
+	ones written in lecture #2 for implementing the who program. I modified
+	the code to work with lastlog structs (as opposed to utmp structs), and
+	added ll_seek() to assist with loading the buffer from the correct position.
+	
+	For buffering, I set the NRECS value to 512, but also tested with values of
+	1, 2, 16, and 2048 to make sure the buffer worked properly. See my plan for 
+	more on buffering, but the tl;dr is when loading a new buffer, it reads 
+	NRECS in, with the requested record at the start of the index.
+
+	I wrote my code using a combination of BBEdit on the Mac, and server-side
+	editing using Emacs. Indentation should be 4-space wide tabs. I checked
+	the display of code before submission, and it looked good in Emacs and
+	Nano, but weird in Vi (presumably because default is 8-space wide tabs).
+	All lines should be under 80-cols wide (with 4-space tabs).

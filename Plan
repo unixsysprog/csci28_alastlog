@@ -1,0 +1,103 @@
+  Author: Matthew Thomas
+    Date: 2/16/2019
+Contains: Design details for CSCI E-215 homework 1
+==================================================
+
+Project: alastlog
+
+Purpose: A program to display a list of last logins.
+
+Outline:
+	alastlog reads a lastlog file, defaults to /var/log/lastlog, and presents
+	the contents in human-readable form. For each entry, the Username,
+	Port (line), From (host), and Latest login time is displayed.
+
+Arguments:
+	alastlog accepts three user options, -u, -t, and -f to specify a user, a
+	date limit on entries, and a different data file respectively. See the
+	Input section for more details.
+		
+Input:
+	alastlog is controlled via the command line and accepts -u, -t, and -f
+	options. The usage and purpose of each is as follows:
+		[-u USER]: 	a USER name or ID is specified and results are
+					restricted to that single user. Multiple users/ranges
+					are not supported.
+		[-t DAYS]:	an amount of time, in DAYS, allows you to restrict output
+					to logins that have happened within the last number of
+					days.
+		[-f FILE]:	an alternate lastlog FILE to read from. By default,
+					alastlog reads from /var/log/lastlog. Using the -f option
+					changes the default behavior.
+	
+Output:
+	The output is fixed-width fields including Username, Port, From,
+	and Latest columns. The latest login field is displayed with a time format
+	of "Mon Dec 17 11:14:39 -0500 2018", for example. Columns are 16, 8, and
+	16 chars for Username, Port, and From respectively. TIMESIZE is defined
+	as 32 chars.
+	
+	alastlog uses read() to get data from the file and uses printf to format and
+	output results. 
+
+Data Structures:
+	The main logic exists in alastlog.c while the open, read, seek, and close
+	functions, along with buffering, exist in lllib.c
+	
+	The functions work as follows:
+		ll_open: Opens the file and returns the file descriptor for the lastlog
+				 file that is used.
+		ll_seek: If the requested record is already in the buffer, update
+				 cur_rec to that position for the next call of ll_read. If not
+				 in the buffer, call on lseek() to move the pointer in the file
+				 descriptor in advance of retrieving a new buffer. Reload the
+				 buffer with NRECS starting at the nearest multiple of the
+				 buffer size.
+		ll_read: If the buffer is empty when called, it loads NRECS into the
+				 buffer. If the cur_rec is at the end of the buffer, it attempts
+				 to load a new set of records into the buffer. If successful,
+				 ll_read() will return a pointer to the lastlog struct for the
+				 cur_rec.
+	  ll_reload: Uses the system call read() to load NRECS into the buffer from
+	  			 wherever ll_seek moved the pointer to (via the offset
+	  			 in lseek).
+	   ll_close: Closes the open file.
+	
+	When a record is requested outside of the current buffer, ll_seek() will
+	adjust the file pointer so that ll_reload() will pull in NRECS starting at
+	the nearest multiple of the buffer size. For example, if UID 600 is 
+	requested with NRECS set to 512, lseek() will point to offset 512 in the
+	lastlog file and read records 512-1023.
+
+Program Flow:
+	1 - Process user options and store any arguments in three
+		variables: user, days, and file to be used later on (if specified).
+		For the -u and -t, check immediately whether the user/time are valid,
+		and exit, with message to stderr, if not.
+	2 - Call on get_log() with the user options. File is set to LLOG_FILE
+		by default, user is set to NULL or the requested passwd entry, and days
+		is set to -1 or the number of days entered with -t.
+	3 - Open the lastlog file.
+	4 - If a "user" was not specified, call getpwent() to begin iterating
+		through the all passwd database entries. Otherwise, set the entry to the
+		user pulled in from the -u option.
+	5 - For all (1+) passwd entries, call ll_seek() to move a pointer to the
+		correct place to read. If nothing has been read yet, or the requested
+		passwd entry is outside the current buffer, the program uses the system
+		call lseek() to manipulate the pointer to the file descriptor. If the
+		request is for an entry currently in the buffer, it adjusts the cur_rec
+		variable accordingly.
+	6 - If there was an error (e.g. requested a range outside the lastlog file)
+		then the lastlog pointer, ll, is set to NULL. Otherwise, ll_read() is
+		called, and it returns a pointer to the requested struct lastlog entry.
+	7 - The lastlog information is then displayed, with a filter applied based
+		on the user's optional -t argument. If no users are displayed, headers
+		are also not displayed.
+	8 - When all 1+ entries are processed, call endpwent() if no user was
+		specified, and in all cases close the lastlog file.
+
+Files:
+	alastlog reads a file of lastlog records. Per the man page for lastlog,
+	entries are sorted by their order in /etc/passwd and that is how
+	alastlog works as well. See Arguments and Input sections
+	above for more info about location of the lastlog file.
